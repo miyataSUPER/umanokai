@@ -140,18 +140,23 @@ def format_umaren_kumi(horse1: int, horse2: int) -> str:
 def extract_race_id_from_url(url: str) -> Optional[str]:
     """
     netkeibaのURLからrace_idを抽出する。
+    
+    対応するURL形式:
+    - https://race.netkeiba.com/race/shutuba.html?race_id=202505041007
+    - https://race.netkeiba.com/race/result.html?race_id=202508031009&rf=race_list
+    - 202505041007 (race_idそのもの)
 
     Parameters
     ----------
     url : str
-        netkeibaのURL（例: https://race.netkeiba.com/race/shutuba.html?race_id=202505041007）
+        netkeibaのURLまたはrace_id
 
     Returns
     -------
     Optional[str]
         抽出されたrace_id。抽出できない場合はNoneを返す。
     """
-    # race_idパラメータを抽出
+    # race_idパラメータを抽出（shutuba.html、result.htmlなどに対応）
     match = re.search(r"race_id=(\d+)", url)
     if match:
         return match.group(1)

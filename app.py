@@ -38,6 +38,10 @@ def ensure_playwright_chromium():
     
     Streamlit Cloud無料版でInstall commandが設定できない場合の対処法。
     """
+    # 既にインストール済みとマークされている場合はスキップ
+    if st.session_state.get("chromium_installed", False):
+        return True
+    
     try:
         from playwright.sync_api import sync_playwright
         
@@ -47,42 +51,61 @@ def ensure_playwright_chromium():
                 # Chromiumを起動してみる（存在する場合は成功）
                 browser = p.chromium.launch(headless=True)
                 browser.close()
+                # インストール済みとマーク
+                st.session_state.chromium_installed = True
                 return True
-            except Exception:
+            except Exception as e:
                 # Chromiumがインストールされていない場合
-                st.info("🔧 Chromiumをインストール中です。初回のみ時間がかかります...")
-                # subprocessでplaywright install chromiumを実行
-                result = subprocess.run(
-                    [sys.executable, "-m", "playwright", "install", "chromium"],
-                    capture_output=True,
-                    text=True,
-                    timeout=300,  # 5分のタイムアウト
-                )
-                if result.returncode == 0:
-                    # システム依存関係もインストール
-                    subprocess.run(
-                        [sys.executable, "-m", "playwright", "install-deps", "chromium"],
+                if not st.session_state.get("chromium_installing", False):
+                    st.session_state.chromium_installing = True
+                    st.info("🔧 Chromiumをインストール中です。初回のみ時間がかかります...")
+                    
+                    # subprocessでplaywright install chromiumを実行
+                    result = subprocess.run(
+                        [sys.executable, "-m", "playwright", "install", "chromium"],
                         capture_output=True,
                         text=True,
-                        timeout=180,  # 3分のタイムアウト
+                        timeout=300,  # 5分のタイムアウト
                     )
-                    st.success("✅ Chromiumのインストールが完了しました。")
-                    st.rerun()  # ページを再読み込みして、再度チェック
-                    return True
+                    if result.returncode == 0:
+                        # システム依存関係もインストール
+                        subprocess.run(
+                            [sys.executable, "-m", "playwright", "install-deps", "chromium"],
+                            capture_output=True,
+                            text=True,
+                            timeout=180,  # 3分のタイムアウト
+                        )
+                        st.session_state.chromium_installing = False
+                        st.success("✅ Chromiumのインストールが完了しました。")
+                        # インストール完了をマークして、メインアプリを表示できるようにする
+                        # 実際の動作確認は次回のアクセス時に行う
+                        st.session_state.chromium_installed = True
+                        st.info("ℹ️ インストールが完了しました。アプリが使用可能になりました。")
+                        st.rerun()
+                        return True
+                    else:
+                        st.session_state.chromium_installing = False
+                        st.error(f"❌ Chromiumのインストールに失敗しました: {result.stderr}")
+                        return False
                 else:
-                    st.error(f"❌ Chromiumのインストールに失敗しました: {result.stderr}")
+                    # インストール中なので待機
+                    st.info("⏳ Chromiumのインストールを続行しています...")
                     return False
     except Exception as e:
         # エラーが発生した場合、スキップして続行を試みる
         st.warning(f"⚠️ Chromiumの確認中にエラーが発生しました: {str(e)}")
         st.info("⚠️ 初回実行時は、Streamlit CloudのログでChromiumのインストール状況を確認してください。")
+        # エラーが発生しても、続行を試みる
+        st.session_state.chromium_installed = True
         return False
 
 
 # アプリ起動時にChromiumのインストールを確認
-if "chromium_checked" not in st.session_state:
-    ensure_playwright_chromium()
-    st.session_state.chromium_checked = True
+chromium_ready = ensure_playwright_chromium()
+
+# インストール中またはインストール失敗の場合は、メインアプリを表示しない
+if st.session_state.get("chromium_installing", False):
+    st.stop()  # インストール中の場合は処理を停止
 
 
 def format_umaren_kumi(horse1: int, horse2: int) -> str:

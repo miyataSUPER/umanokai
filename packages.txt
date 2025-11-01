@@ -1,5 +1,3 @@
-# Playwrightのシステム依存関係（Streamlit Cloud用）
-# Linux環境でPlaywrightを使用するために必要
 chromium
 chromium-chromedriver
 libglib2.0-0

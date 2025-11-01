@@ -5,10 +5,6 @@
     {
       "source": "/api/odds",
       "destination": "/api/odds.py"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/public/$1"
     }
   ],
   "functions": {

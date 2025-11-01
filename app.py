@@ -19,6 +19,9 @@ Streamlitアプリケーション: JRAレースオッズ表示ツール
 import re
 import asyncio
 import json
+import subprocess
+import sys
+from pathlib import Path
 from typing import Optional
 
 import streamlit as st
@@ -26,6 +29,60 @@ import pandas as pd
 import streamlit.components.v1 as components
 
 from extract_odds import RealtimeOdds
+
+
+def ensure_playwright_chromium():
+    """
+    PlaywrightのChromiumがインストールされているか確認し、
+    インストールされていない場合は自動的にインストールする。
+    
+    Streamlit Cloud無料版でInstall commandが設定できない場合の対処法。
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+        
+        # Playwrightのインスタンスを作成して、Chromiumが存在するかチェック
+        with sync_playwright() as p:
+            try:
+                # Chromiumを起動してみる（存在する場合は成功）
+                browser = p.chromium.launch(headless=True)
+                browser.close()
+                return True
+            except Exception:
+                # Chromiumがインストールされていない場合
+                st.info("🔧 Chromiumをインストール中です。初回のみ時間がかかります...")
+                # subprocessでplaywright install chromiumを実行
+                result = subprocess.run(
+                    [sys.executable, "-m", "playwright", "install", "chromium"],
+                    capture_output=True,
+                    text=True,
+                    timeout=300,  # 5分のタイムアウト
+                )
+                if result.returncode == 0:
+                    # システム依存関係もインストール
+                    subprocess.run(
+                        [sys.executable, "-m", "playwright", "install-deps", "chromium"],
+                        capture_output=True,
+                        text=True,
+                        timeout=180,  # 3分のタイムアウト
+                    )
+                    st.success("✅ Chromiumのインストールが完了しました。")
+                    st.rerun()  # ページを再読み込みして、再度チェック
+                    return True
+                else:
+                    st.error(f"❌ Chromiumのインストールに失敗しました: {result.stderr}")
+                    return False
+    except Exception as e:
+        # エラーが発生した場合、スキップして続行を試みる
+        st.warning(f"⚠️ Chromiumの確認中にエラーが発生しました: {str(e)}")
+        st.info("⚠️ 初回実行時は、Streamlit CloudのログでChromiumのインストール状況を確認してください。")
+        return False
+
+
+# アプリ起動時にChromiumのインストールを確認
+if "chromium_checked" not in st.session_state:
+    ensure_playwright_chromium()
+    st.session_state.chromium_checked = True
 
 
 def format_umaren_kumi(horse1: int, horse2: int) -> str:

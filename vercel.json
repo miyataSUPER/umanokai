@@ -1,15 +1,9 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/odds.py",
-      "use": "@vercel/python"
-    }
-  ],
   "routes": [
     {
       "src": "/api/odds",
-      "dest": "api/odds.py"
+      "dest": "/api/odds.py"
     },
     {
       "src": "/static/(.*)",
@@ -22,6 +16,7 @@
   ],
   "functions": {
     "api/odds.py": {
+      "runtime": "python3.9",
       "maxDuration": 60
     }
   },

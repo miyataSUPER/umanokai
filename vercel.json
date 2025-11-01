@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "Uma-no-kai-odd-logic",
   "routes": [
     {
       "src": "/api/odds",

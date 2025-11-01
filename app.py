@@ -661,7 +661,7 @@ def main():
                 st.info(
                     f"馬連上位2つ: {combo1['組み合わせ']}（{combo1['オッズ']:.1f}）、"
                     f"{combo2['組み合わせ']}（{combo2['オッズ']:.1f}） | "
-                    f"軸: {axis_horse:02d}番"
+                    f"軸: {axis_horse}番"
                 )
             
             status_text.text("✅ オッズ情報の取得が完了しました。")

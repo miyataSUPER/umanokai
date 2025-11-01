@@ -336,7 +336,9 @@ def get_umaren_top_popular(
     # 軸馬番を含む全ての馬連オッズを抽出
     axis_umaren_odds = []
     for kumi, odds in umaren_odds.items():
+        # 組み合わせの形式は "02,05" のような形式
         horses = [int(h.strip()) for h in kumi.split(",")]
+        # 軸馬番が含まれているかチェック
         if axis_horse in horses:
             # もう一頭の馬番を取得
             other_horse = horses[1] if horses[0] == axis_horse else horses[0]
@@ -348,6 +350,10 @@ def get_umaren_top_popular(
                 "組み合わせ": formatted_kumi,
                 "オッズ": odds,
             })
+    
+    # デバッグ: 軸馬番を含む全ての組み合わせを確認
+    print(f"デバッグ: 軸馬番{axis_horse}を含む組み合わせ数: {len(axis_umaren_odds)}")
+    print(f"デバッグ: 全ての組み合わせ: {[combo['相手馬番'] for combo in axis_umaren_odds]}")
     
     if not axis_umaren_odds:
         return top_two_combinations, axis_horse, pd.DataFrame(columns=["軸馬番", "相手馬番", "組み合わせ", "オッズ"])
@@ -502,12 +508,17 @@ def main():
                 umaren_horses_row = []
                 
                 # 軸馬番を含む全ての組み合わせを取得（オッズ順にソート済み）
+                # axis_umaren_dfには軸馬番を含む全ての組み合わせが含まれているはず
                 sorted_combinations = []
                 for _, row in axis_umaren_df.iterrows():
                     sorted_combinations.append({
-                        "相手馬番": row['相手馬番'],
+                        "相手馬番": int(row['相手馬番']),  # 整数型に変換
                         "オッズ": row['オッズ'],
                     })
+                
+                # 相手馬番でソート（オッズ順が既に保たれているが、念のため確認）
+                # オッズ順に既にソートされているはずだが、念のため再ソート
+                sorted_combinations = sorted(sorted_combinations, key=lambda x: x['オッズ'])
                 
                 if len(sorted_combinations) >= 3:
                     # 先頭には軸馬番のみ（数字のみ、記号なし）

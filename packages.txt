@@ -1,0 +1,6 @@
+# Streamlit Cloud用のシステムパッケージ
+# PlaywrightのChromium実行に必要な依存関係
+
+# 注意: Streamlit Cloudではこれらのパッケージは自動的にインストールされますが、
+# 明示的に指定することで確実に動作するようにします
+

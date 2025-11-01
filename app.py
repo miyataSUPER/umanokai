@@ -473,7 +473,7 @@ def main():
                 
                 for idx, (horse, odds) in enumerate(tansho_sorted_for_display):
                     tansho_row.append(f"{odds:.2f}")
-                    tansho_horses_row.append(f"{horse:02d}")
+                    tansho_horses_row.append(str(horse))  # 一桁の数字も一桁で出力（ゼロ埋めなし）
                 
                 display_data["単勝_オッズ"] = tansho_row
                 display_data["単勝_馬番"] = tansho_horses_row
@@ -493,7 +493,7 @@ def main():
                 
                 for idx, (horse, odds) in enumerate(fukusho_sorted_for_display):
                     fukusho_row.append(f"{odds:.2f}")
-                    fukusho_horses_row.append(f"{horse:02d}")
+                    fukusho_horses_row.append(str(horse))  # 一桁の数字も一桁で出力（ゼロ埋めなし）
                 
                 display_data["複勝_オッズ"] = fukusho_row
                 display_data["複勝_馬番"] = fukusho_horses_row

@@ -68,13 +68,18 @@ def ensure_playwright_chromium():
                         timeout=300,  # 5分のタイムアウト
                     )
                     if result.returncode == 0:
-                        # システム依存関係もインストール
-                        subprocess.run(
-                            [sys.executable, "-m", "playwright", "install-deps", "chromium"],
-                            capture_output=True,
-                            text=True,
-                            timeout=180,  # 3分のタイムアウト
-                        )
+                        # システム依存関係もインストール（sudo権限が必要な場合があるため、スキップしても良い）
+                        # Streamlit Cloudでは、packages.txtを使ってシステム依存関係をインストールする
+                        try:
+                            subprocess.run(
+                                [sys.executable, "-m", "playwright", "install-deps", "chromium"],
+                                capture_output=True,
+                                text=True,
+                                timeout=180,  # 3分のタイムアウト
+                            )
+                        except Exception as deps_error:
+                            # 依存関係のインストールに失敗しても続行
+                            st.warning(f"⚠️ システム依存関係のインストールで警告がありました（続行します）: {str(deps_error)}")
                         st.session_state.chromium_installing = False
                         st.success("✅ Chromiumのインストールが完了しました。")
                         # インストール完了をマークして、メインアプリを表示できるようにする

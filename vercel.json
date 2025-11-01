@@ -1,20 +1,6 @@
 {
   "version": 2,
-  "name": "Uma-no-kai-odd-logic",
-  "routes": [
-    {
-      "src": "/api/odds",
-      "dest": "/api/odds.py"
-    },
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
+  "name": "uma-no-kai-odd-logic",
   "functions": {
     "api/odds.py": {
       "runtime": "python3.9",
@@ -23,8 +9,16 @@
   },
   "rewrites": [
     {
+      "source": "/api/odds",
+      "destination": "/api/odds.py"
+    },
+    {
       "source": "/static/(.*)",
       "destination": "/static/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

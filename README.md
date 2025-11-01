@@ -49,7 +49,7 @@ streamlit run app.py
    - リポジトリを選択: `[YOUR-USERNAME]/umanokai`
    - **Main file path**: `app.py` を入力
    - **Python version**: `3.10` を選択
-   - **Install command**: `pip install -r requirements.txt && playwright install chromium && playwright install-deps chromium`
+   - **Install command**: `pip install -r requirements.txt && python -m playwright install chromium && python -m playwright install-deps chromium`
    - "Deploy!"をクリック
 
 3. **注意事項**
@@ -64,7 +64,6 @@ streamlit run app.py
 - `requirements.txt`: 依存関係（Streamlit Cloud用）
 - `requirements-streamlit.txt`: Streamlit版用の依存関係（ローカルテスト用）
 - `.streamlit/config.toml`: Streamlit設定
-- `packages.txt`: システム依存関係（Playwright用）
 - `SPEC.md`: 仕様書
 - `DEPLOY_STREAMLIT_CLOUD.md`: Streamlit Cloudデプロイガイド
 

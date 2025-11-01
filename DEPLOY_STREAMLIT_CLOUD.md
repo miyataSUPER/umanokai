@@ -31,53 +31,15 @@ git push origin main
    - **Repository**: `[YOUR-USERNAME]/umanokai` を選択
    - **Branch**: `main` を選択
    - **Main file path**: `app.py` を入力
-   - **Python version**: `3.9` または `3.10` を選択（推奨: `3.10`）
-3. 「Deploy!」をクリック
+   - **Python version**: `3.10` を選択（推奨: `3.10`）
+3. 「Advanced settings」を展開
+4. **Install command** に以下を入力（重要）:
+   ```
+   pip install -r requirements.txt && python -m playwright install chromium && python -m playwright install-deps chromium
+   ```
+5. 「Deploy!」をクリック
 
-### 4. Playwrightのセットアップ
-
-Streamlit Cloudでは、Playwrightのブラウザをインストールする必要があります。
-
-#### 方法1: `.streamlit/secrets.toml`を使用（推奨）
-
-デプロイ後、Streamlit Cloudのダッシュボードで：
-1. **Settings** → **Secrets** を開く
-2. 以下を追加（現在は不要ですが、将来的に使用する場合）:
-
-```toml
-# 現在は不要ですが、将来的に設定が必要な場合はここに記載
-```
-
-#### 方法2: `packages.txt`を使用
-
-Playwrightの依存関係をインストールするために、ルートディレクトリに `packages.txt` を作成します：
-
-```txt
-chromium
-chromium-chromedriver
-```
-
-しかし、Streamlit CloudはLinux環境のため、`playwright install chromium`を実行する必要があります。
-
-### 5. ビルドコマンドの設定（重要）
-
-Streamlit Cloudのダッシュボードで：
-1. **Settings** → **General** を開く
-2. **Advanced settings** を展開
-3. **Dependencies** セクションで以下を確認：
-   - **Python version**: `3.10` を選択
-   - **Install command**: 
-     ```
-     pip install -r requirements.txt && playwright install chromium && playwright install-deps chromium
-     ```
-
-または、`packages.txt`を使用する場合：
-- **Install command**: 
-  ```
-  pip install -r requirements.txt && playwright install chromium && playwright install-deps chromium
-  ```
-
-### 6. デプロイの確認
+### 4. デプロイの確認
 
 デプロイが完了すると、以下のようなURLが発行されます：
 ```
@@ -97,6 +59,15 @@ Streamlit Cloudの無料プランでは、アプリの実行時間に制限が�
 - 初回実行時はChromiumのダウンロードが必要なため、時間がかかります
 - タイムアウトする可能性がある場合は、Streamlit Cloudのタイムアウト設定を確認してください
 
+### Install Command の重要性
+
+**必須設定**: Streamlit Cloudのダッシュボードで、**Install command** を必ず設定してください：
+```
+pip install -r requirements.txt && python -m playwright install chromium && python -m playwright install-deps chromium
+```
+
+この設定がないと、Chromiumがインストールされず、エラーが発生します。
+
 ### ログの確認
 
 デプロイ後の問題確認：
@@ -108,11 +79,16 @@ Streamlit Cloudの無料プランでは、アプリの実行時間に制限が�
 ### ビルドエラー
 
 - **エラー**: `playwright: command not found`
-  - **解決策**: Install commandに `playwright install chromium && playwright install-deps chromium` を追加
+  - **解決策**: Install commandに `python -m playwright install chromium && python -m playwright install-deps chromium` を追加
+  - **注意**: `playwright install chromium` ではなく、`python -m playwright install chromium` を使用してください
 
-- **エラー**: `chromium not found`
-  - **解決策**: `playwright install chromium` を実行する必要があります
-  - Install commandを確認してください
+- **エラー**: `chromium not found` または `Executable doesn't exist`
+  - **解決策**: Install commandが正しく設定されているか確認
+  - **確認方法**: Settings → General → Advanced settings → Dependencies → Install command
+  - **正しい設定**:
+    ```
+    pip install -r requirements.txt && python -m playwright install chromium && python -m playwright install-deps chromium
+    ```
 
 ### 実行時エラー
 
@@ -143,7 +119,7 @@ Streamlit Cloudは自動的に変更を検知して再デプロイします（�
 
 ## 設定ファイル
 
-### `.streamlit/config.toml`（オプション）
+### `.streamlit/config.toml`
 
 アプリの設定をカスタマイズする場合、`.streamlit/config.toml`を作成：
 
@@ -158,4 +134,3 @@ gatherUsageStats = false
 ```
 
 現在は必要ありませんが、カスタマイズする場合は使用できます。
-

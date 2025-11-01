@@ -54,7 +54,8 @@ streamlit run app.py
 
 3. **注意事項**
    - 初回デプロイには数分かかる場合があります（PlaywrightのChromiumのインストールが必要なため）
-   - Streamlit Cloudの無料プランで動作します
+   - Streamlit Cloudの無料プランで動作する可能性があります（メモリ制限: 1GB）
+   - 無料版で動作しない場合の代替案は[STREAMLIT_CLOUD_FREE_TIER.md](STREAMLIT_CLOUD_FREE_TIER.md)を参照してください
    - 詳細は[DEPLOY_STREAMLIT_CLOUD.md](DEPLOY_STREAMLIT_CLOUD.md)を参照してください
 
 ## ファイル構成

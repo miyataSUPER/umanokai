@@ -154,8 +154,11 @@ async def fetch_odds(race_id: str) -> dict:
         odds_extractor = RealtimeOdds(race_id)
         
         # HTMLを取得（単勝・複勝、馬連を含む）
+        # Streamlit Cloud無料版用に最適化: delay_timeを短縮し、メモリ使用量を削減
         await odds_extractor.scrape_html(
-            skip_bet_types=["wakuren", "wide", "umatan", "sanrenpuku", "sanrentan"]
+            skip_bet_types=["wakuren", "wide", "umatan", "sanrenpuku", "sanrentan"],
+            headless=True,
+            delay_time=300,  # Streamlit Cloud無料版用に短縮
         )
         
         # 単勝オッズを抽出

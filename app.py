@@ -573,11 +573,9 @@ def main():
                 st.warning("オッズデータが見つかりませんでした。")
                 return
             
-            # 各行の長さを揃える（不足分は空文字で埋める）
-            for key in display_data:
-                current_len = len(display_data[key])
-                if current_len < max_cols:
-                    display_data[key].extend([""] * (max_cols - current_len))
+            # 馬連の表示形式変更により、各行の長さが一致するようになったため、
+            # 空白で埋める処理は不要になりました
+            # （各行の長さが異なる場合は、そのまま表示します）
             
             # DataFrameを作成（行名がラベル、列は順番）
             # display_dataは辞書で、キーが行名、値がリスト（列データ）になっている

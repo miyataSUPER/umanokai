@@ -2,15 +2,33 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.py",
+      "src": "api/odds.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
+      "src": "/api/odds",
+      "dest": "api/odds.py"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "app.py"
+      "dest": "/index.html"
+    }
+  ],
+  "functions": {
+    "api/odds.py": {
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/static/(.*)",
+      "destination": "/static/$1"
     }
   ]
 }
-

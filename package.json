@@ -2,7 +2,6 @@
   "name": "uma-no-kai-odd-logic",
   "version": "1.0.0",
   "scripts": {
-    "build": "python3 -m pip install -r requirements.txt && python3 -m playwright install chromium"
+    "build": ""
   }
 }
-

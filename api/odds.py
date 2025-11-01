@@ -76,7 +76,7 @@ def handler(request):
     Parameters
     ----------
     request : Request
-        Vercelのリクエストオブジェクト（または辞書）
+        Vercelのリクエストオブジェクト
     
     Returns
     -------
@@ -91,24 +91,8 @@ def handler(request):
         "Content-Type": "application/json",
     }
     
-    # リクエストが辞書形式の場合とオブジェクト形式の場合に対応
-    if isinstance(request, dict):
-        # 辞書形式の場合
-        method = request.get("method", request.get("httpMethod", "GET"))
-        query_params = request.get("query", request.get("queryStringParameters", {}))
-    else:
-        # オブジェクト形式の場合
-        try:
-            from urllib.parse import urlparse, parse_qs
-            method = getattr(request, "method", "GET")
-            parsed_url = urlparse(request.path if hasattr(request, "path") else "/")
-            query_params = parse_qs(parsed_url.query)
-            # リストを単一値に変換
-            query_params = {k: v[0] if isinstance(v, list) and len(v) > 0 else None 
-                          for k, v in query_params.items()}
-        except Exception:
-            method = "GET"
-            query_params = {}
+    # リクエストメソッドを取得
+    method = getattr(request, "method", "GET")
     
     # OPTIONSリクエストの処理（CORS preflight）
     if method == "OPTIONS":
@@ -119,6 +103,18 @@ def handler(request):
         }
     
     try:
+        # クエリパラメータを取得
+        from urllib.parse import urlparse, parse_qs
+        
+        # リクエストURLを取得
+        url = getattr(request, "url", "/")
+        parsed_url = urlparse(url)
+        query_params = parse_qs(parsed_url.query)
+        
+        # リストを単一値に変換
+        query_params = {k: v[0] if isinstance(v, list) and len(v) > 0 else None 
+                       for k, v in query_params.items()}
+        
         # race_idを取得
         race_id = query_params.get("race_id")
         

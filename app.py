@@ -547,16 +547,16 @@ def main():
                     
                     umaren_odds_row.append(f"{first_odds:.2f}")
                     
-                    # 2番目以降は相手馬番のみ（数字のみ、記号なし）
-                    for combo in sorted_combinations[1:]:  # 2番目から
+                    # 全ての組み合わせを表示（1番目から全て）
+                    for combo in sorted_combinations:  # 全ての組み合わせ
                         umaren_odds_row.append(f"{combo['オッズ']:.2f}")
                         umaren_horses_row.append(str(combo['相手馬番']))
                 elif len(sorted_combinations) >= 2:
                     # 組み合わせが2つしかない場合（先頭のオッズは2番目のオッズを使用）
                     umaren_horses_row.append(str(axis_horse))
                     umaren_odds_row.append(f"{sorted_combinations[1]['オッズ']:.2f}")
-                    # 2番目以降は相手馬番のみ
-                    for combo in sorted_combinations[1:]:
+                    # 全ての組み合わせを表示
+                    for combo in sorted_combinations:
                         umaren_odds_row.append(f"{combo['オッズ']:.2f}")
                         umaren_horses_row.append(str(combo['相手馬番']))
                 elif len(sorted_combinations) == 1:

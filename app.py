@@ -496,27 +496,68 @@ def main():
                 display_data["複勝_馬番"] = []
             
             
-            # 馬連_オッズ行と馬連_馬番行（馬連上位2つを先頭に入れる）
-            if len(top_two_umaren) >= 2 and axis_horse is not None and not axis_umaren_df.empty:
-                # 馬連_オッズ行
-                umaren_row = []
-                # 馬連_馬番行
+            # 馬連_オッズ行と馬連_馬番行（新しい形式：先頭に軸馬番のみ、次に相手馬番のみ）
+            if axis_horse is not None and not axis_umaren_df.empty:
+                umaren_odds_row = []
                 umaren_horses_row = []
                 
-                # 馬連上位2つを先頭に追加
-                for top_combo in top_two_umaren:
-                    umaren_row.append(f"{top_combo['オッズ']:.2f}")
-                    umaren_horses_row.append(top_combo['組み合わせ'])
-                
-                # 軸馬番を含む相手馬番をオッズの低い順に追加（上位2つは除外）
-                top_two_kumi = {combo['組み合わせ'] for combo in top_two_umaren}
+                # 軸馬番を含む全ての組み合わせを取得（オッズ順にソート済み）
+                sorted_combinations = []
                 for _, row in axis_umaren_df.iterrows():
-                    # 上位2つと同じ組み合わせはスキップ（既に先頭に追加済み）
-                    if row['組み合わせ'] not in top_two_kumi:
-                        umaren_row.append(f"{row['オッズ']:.2f}")
-                        umaren_horses_row.append(row['組み合わせ'])
+                    sorted_combinations.append({
+                        "相手馬番": row['相手馬番'],
+                        "オッズ": row['オッズ'],
+                    })
                 
-                display_data["馬連_オッズ"] = umaren_row
+                if len(sorted_combinations) >= 3:
+                    # 先頭には軸馬番のみ（数字のみ、記号なし）
+                    umaren_horses_row.append(str(axis_horse))
+                    
+                    # 先頭のオッズは、2番目と3番目の組み合わせから「相手馬番同士の組み合わせ」のオッズを探す
+                    # 例: 2番目が6-10、3番目が6-9の場合、9-10のオッズを先頭に入れる
+                    first_other_horse = sorted_combinations[1]["相手馬番"]  # 2番目の相手馬番（インデックス1）
+                    second_other_horse = sorted_combinations[2]["相手馬番"]  # 3番目の相手馬番（インデックス2）
+                    
+                    # 小さい方を先頭にした組み合わせを探す
+                    smaller = min(first_other_horse, second_other_horse)
+                    larger = max(first_other_horse, second_other_horse)
+                    
+                    # umaren_oddsから該当する組み合わせのオッズを探す
+                    first_odds = None
+                    for kumi, odds in umaren_odds.items():
+                        horses = [int(h.strip()) for h in kumi.split(",")]
+                        if (horses[0] == smaller and horses[1] == larger) or (horses[1] == smaller and horses[0] == larger):
+                            first_odds = odds
+                            break
+                    
+                    # 見つからない場合は、2番目のオッズを使用
+                    if first_odds is None:
+                        first_odds = sorted_combinations[1]["オッズ"]
+                    
+                    umaren_odds_row.append(f"{first_odds:.2f}")
+                    
+                    # 2番目以降は相手馬番のみ（数字のみ、記号なし）
+                    for combo in sorted_combinations[1:]:  # 2番目から
+                        umaren_odds_row.append(f"{combo['オッズ']:.2f}")
+                        umaren_horses_row.append(str(combo['相手馬番']))
+                elif len(sorted_combinations) >= 2:
+                    # 組み合わせが2つしかない場合（先頭のオッズは2番目のオッズを使用）
+                    umaren_horses_row.append(str(axis_horse))
+                    umaren_odds_row.append(f"{sorted_combinations[1]['オッズ']:.2f}")
+                    # 2番目以降は相手馬番のみ
+                    for combo in sorted_combinations[1:]:
+                        umaren_odds_row.append(f"{combo['オッズ']:.2f}")
+                        umaren_horses_row.append(str(combo['相手馬番']))
+                elif len(sorted_combinations) == 1:
+                    # 組み合わせが1つだけの場合
+                    umaren_horses_row.append(str(axis_horse))
+                    umaren_odds_row.append(f"{sorted_combinations[0]['オッズ']:.2f}")
+                    umaren_horses_row.append(str(sorted_combinations[0]['相手馬番']))
+                else:
+                    # 組み合わせがない場合
+                    umaren_horses_row.append(str(axis_horse))
+                
+                display_data["馬連_オッズ"] = umaren_odds_row
                 display_data["馬連_馬番"] = umaren_horses_row
             else:
                 display_data["馬連_オッズ"] = []

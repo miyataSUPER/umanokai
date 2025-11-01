@@ -45,7 +45,7 @@ git push -u origin main
    - **Root Directory**: `./`（デフォルト）
    - **Build Command**: （空欄のまま）
    - **Output Directory**: （空欄のまま）
-   - **Install Command**: `pip install -r requirements.txt && playwright install chromium`
+   - **Install Command**: `python3 -m pip install -r requirements.txt && python3 -m playwright install chromium`
 4. 「Deploy」をクリック
 
 ### 4. 環境変数の設定（必要に応じて）

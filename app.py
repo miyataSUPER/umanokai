@@ -477,7 +477,7 @@ def main():
                 tansho_horses_row = []
                 
                 for idx, (horse, odds) in enumerate(tansho_sorted_for_display):
-                    tansho_row.append(f"{odds:.2f}")
+                    tansho_row.append(f"{odds:.1f}")  # 小数点第一位まで
                     tansho_horses_row.append(str(horse))  # 一桁の数字も一桁で出力（ゼロ埋めなし）
                 
                 display_data["単勝_オッズ"] = tansho_row
@@ -497,7 +497,7 @@ def main():
                 fukusho_horses_row = []
                 
                 for idx, (horse, odds) in enumerate(fukusho_sorted_for_display):
-                    fukusho_row.append(f"{odds:.2f}")
+                    fukusho_row.append(f"{odds:.1f}")  # 小数点第一位まで
                     fukusho_horses_row.append(str(horse))  # 一桁の数字も一桁で出力（ゼロ埋めなし）
                 
                 display_data["複勝_オッズ"] = fukusho_row
@@ -550,24 +550,24 @@ def main():
                     if first_odds is None:
                         first_odds = sorted_combinations[1]["オッズ"]
                     
-                    umaren_odds_row.append(f"{first_odds:.2f}")
+                    umaren_odds_row.append(f"{first_odds:.1f}")  # 小数点第一位まで
                     
                     # 全ての組み合わせを表示（1番目から全て）
                     for combo in sorted_combinations:  # 全ての組み合わせ
-                        umaren_odds_row.append(f"{combo['オッズ']:.2f}")
+                        umaren_odds_row.append(f"{combo['オッズ']:.1f}")  # 小数点第一位まで
                         umaren_horses_row.append(str(combo['相手馬番']))
                 elif len(sorted_combinations) >= 2:
                     # 組み合わせが2つしかない場合（先頭のオッズは2番目のオッズを使用）
                     umaren_horses_row.append(str(axis_horse))
-                    umaren_odds_row.append(f"{sorted_combinations[1]['オッズ']:.2f}")
+                    umaren_odds_row.append(f"{sorted_combinations[1]['オッズ']:.1f}")  # 小数点第一位まで
                     # 全ての組み合わせを表示
                     for combo in sorted_combinations:
-                        umaren_odds_row.append(f"{combo['オッズ']:.2f}")
+                        umaren_odds_row.append(f"{combo['オッズ']:.1f}")  # 小数点第一位まで
                         umaren_horses_row.append(str(combo['相手馬番']))
                 elif len(sorted_combinations) == 1:
                     # 組み合わせが1つだけの場合
                     umaren_horses_row.append(str(axis_horse))
-                    umaren_odds_row.append(f"{sorted_combinations[0]['オッズ']:.2f}")
+                    umaren_odds_row.append(f"{sorted_combinations[0]['オッズ']:.1f}")  # 小数点第一位まで
                     umaren_horses_row.append(str(sorted_combinations[0]['相手馬番']))
                 else:
                     # 組み合わせがない場合
@@ -659,8 +659,8 @@ def main():
                 combo1 = top_two_umaren[0]
                 combo2 = top_two_umaren[1]
                 st.info(
-                    f"馬連上位2つ: {combo1['組み合わせ']}（{combo1['オッズ']:.2f}）、"
-                    f"{combo2['組み合わせ']}（{combo2['オッズ']:.2f}） | "
+                    f"馬連上位2つ: {combo1['組み合わせ']}（{combo1['オッズ']:.1f}）、"
+                    f"{combo2['組み合わせ']}（{combo2['オッズ']:.1f}） | "
                     f"軸: {axis_horse:02d}番"
                 )
             
